@@ -1,0 +1,26 @@
+Atmel AVR RAVEN
+
+This subproject contains port of the Atmel AVR RAVEN to TinyOS. Atmel AVR RAVEN contains (see AVR2016: RZRAVEN Hardware User's Guide):
+
+-   rf subsystem - atmega1284p, radio at86rf230 on SPI, serial number/EUI64 in at24c02b on TWI
+-   peripheral subsystem - atmega3290p, LCD display, 4 way joystick, external flash at45db161d, battery voltage monitor, temperature monitor (thermistor), relay driver, audio speaker and microphone
+-   SIPC - serial inter-platform communication - platform interconnect serial UART (38400 baud)
+
+Implementation:
+
+-   platform led on ports A0,A1,A2 on atmega1284p routed to pinheader
+-   most sources taken/ported from micaz/mica/iris platform (copied not linked in .platform)
+-   atmega1284p uses internal clock source (8Mhz) (HiFuse=0x18/LoFuse=0xc2)
+-   firmware for atmega3290p (LCD) is modified from BitCloud_ATAVRRZRAVEN_1_11_0 (tos/platforms/raven/flash.srec)
+-   implemented LocalIeeeEui64C->RavenIeeeEui64P from at24c02b on TWI (Eui64 is available later in Boot.booted() due to disabled interrupt and uninitialized arbiter subsystem in SoftwareInit.init() (problem with "TEP 107: Boot Sequence" and "TEP122: IEEE EUI-64 Unique Node Identifier"))
+-   implemented RavenC that uses communication link (SIPC) to atmega3290p (LCD) (see hello world application)
+-   not fully tested :-(
+
+TODO:
+
+-   review code
+-   rewrite firmware atmega3290p to TinyOS with more commands (uploading/downloading audio, relay driver, more LCD commands ...)
+-   review/delete imported modules (MicaTimer)
+-   use CLKM from at89rf230 as clock source to XTAL1 atmega1284p, resolve power saving
+
+
