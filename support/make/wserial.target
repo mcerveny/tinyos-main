@@ -1,0 +1,33 @@
+#-*-Makefile-*- vim:syntax=make
+
+PLATFORM = wserial
+SENSORBOARD ?= 
+PROGRAMMER ?= avarice
+
+
+ifeq ($(PROGRAMMER),avrdude)
+  PROGRAMMER_PART ?= -pm1281 -U efuse:w:0xff:m
+endif
+
+ifeq ($(PROGRAMMER),uisp)
+  PROGRAMMER_PART ?= -dpart=ATmega1281 --wr_fuse_e=ff
+endif
+
+ifeq ($(PROGRAMMER),avarice)
+  PROGRAMMER_PART ?= --part atmega1281
+  JTAGICEMKII ?= usb:3fc4
+  AVR_FUSE_E ?= 0xff
+endif
+
+#Setting Fusebits as default
+AVR_FUSE_H ?= 0x19
+AVR_FUSE_L ?= 0xE2
+
+ifdef RF230_CHANNEL
+PFLAGS += -DRF230_DEF_CHANNEL=$(RF230_CHANNEL)
+endif
+
+$(call TOSMake_include_platform,avr)
+
+wserial: $(BUILD_DEPS)
+	@:
