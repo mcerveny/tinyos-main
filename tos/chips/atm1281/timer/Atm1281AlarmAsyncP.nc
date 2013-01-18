@@ -110,16 +110,20 @@ implementation
      reaches this value before we can set the compare register.
   */
   void setOcr2A(uint8_t n) {
+    uint8_t timer;
     while (call TimerAsync.compareABusy())
       ;
-    if (n == call Timer.get())
-      n++;
-    /* Support for overflow. Force interrupt at wrap around value.
-       This does not cause a backwards-in-time value as we do this
-       every time we set OCR2A. */
-    if (base + n + 1 < base)
-      n = -base - 1;
-    call Compare.set(n);
+    atomic {
+      timer = call Timer.get();
+      if (n <= timer)
+        n = timer +1;
+      /* Support for overflow. Force interrupt at wrap around value.
+         This does not cause a backwards-in-time value as we do this
+         every time we set OCR2A. */
+      if (base + n + 1 < base)
+        n = -base - 1;
+      call Compare.set(n);
+    }
   }
 
   /* Update the compare register to trigger an interrupt at the
