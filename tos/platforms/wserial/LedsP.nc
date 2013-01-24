@@ -57,19 +57,19 @@ implementation {
       call Led0.makeOutput();
       call Led1.makeOutput();
       call Led2.makeOutput();
-      call Led0.clr();
-      call Led1.clr();
-      call Led2.clr();
+      call Led0.set();
+      call Led1.set();
+      call Led2.set();
     }
     return SUCCESS;
   }
 
   async command void Leds.led0On() {
-    call Led0.set();
+    call Led0.clr();
   }
 
   async command void Leds.led0Off() {
-    call Led0.clr();
+    call Led0.set();
   }
 
   async command void Leds.led0Toggle() {
@@ -79,11 +79,11 @@ implementation {
   }
 
   async command void Leds.led1On() {
-    call Led1.set();
+    call Led1.clr();
   }
 
   async command void Leds.led1Off() {
-    call Led1.clr();
+    call Led1.set();
   }
 
   async command void Leds.led1Toggle() {
@@ -91,11 +91,11 @@ implementation {
   }
 
   async command void Leds.led2On() {
-    call Led2.set();
+    call Led2.clr();
   }
 
   async command void Leds.led2Off() {
-    call Led2.clr();
+    call Led2.set();
   }
 
   async command void Leds.led2Toggle() {
@@ -106,13 +106,13 @@ implementation {
     uint8_t rval;
     atomic {
       rval = 0;
-      if (call Led0.get()) {
+      if (! call Led0.get()) {
         rval |= LEDS_LED0;
       }
-      if (call Led1.get()) {
+      if (! call Led1.get()) {
         rval |= LEDS_LED1;
       }
-      if (call Led2.get()) {
+      if (! call Led2.get()) {
         rval |= LEDS_LED2;
       }
     return rval;
