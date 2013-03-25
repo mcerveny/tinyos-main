@@ -61,7 +61,7 @@ implementation{
   norace uint16_t m_tx_len, m_rx_len;
   norace uint8_t * COUNT_NOK(m_tx_len) m_tx_buf, * COUNT_NOK(m_rx_len) m_rx_buf;
   norace uint16_t m_tx_pos, m_rx_pos;
-  norace uint8_t m_byte_time;
+  norace uint16_t m_byte_time;
   norace uint8_t current_owner;
   
   
@@ -197,11 +197,7 @@ async command error_t UartStream.send[ uint8_t id ]( uint8_t* buf, uint16_t len 
   	// prepare device for UART mode
   	Atm1281UartUnionConfig_t* config = call Atm1281UartConfigure.getConfig[id]();
   	  	
-	// should be fixed  	
-  	if (PLATFORM_BAUDRATE == 19200UL)
-      m_byte_time = 200; // 1 TMicor ~= 2.12 us, one byte = 417us ~= 200
-    else if (PLATFORM_BAUDRATE == 57600UL)
-      m_byte_time = 68;  // 1 TMicor ~= 2.12 us, one byte = 138us ~= 65
+    m_byte_time = (1024L*1024*9)/PLATFORM_BAUDRATE; 
     
   	call Usart.setModeUart(config);
   	call Usart.enableIntr();

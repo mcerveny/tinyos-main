@@ -199,6 +199,10 @@ Atm1281UartUnionConfig_t atm1281_uart_default_config = {{
   ubr : ATM1281_38400_BAUD_8MHZ_2X,
   #elif PLATFORM_BAUDRATE == 19200L
   ubr : ATM1281_19200_BAUD_8MHZ_2X,
+  #elif PLATFORM_BAUDRATE == 9600L
+  ubr : ATM1281_9600_BAUD_8MHZ_2X,
+  #elif PLATFORM_BAUDRATE == 4800L
+  ubr : ATM1281_4800_BAUD_8MHZ_2X,
   #endif
 #elif MHZ == 4
   #if PLATFORM_BAUDRATE == 115200L
@@ -209,6 +213,10 @@ Atm1281UartUnionConfig_t atm1281_uart_default_config = {{
   ubr : ATM1281_38400_BAUD_4MHZ_2X,
   #elif PLATFORM_BAUDRATE == 19200L
   ubr : ATM1281_19200_BAUD_4MHZ_2X,
+  #elif PLATFORM_BAUDRATE == 9600L
+  ubr : ATM1281_9600_BAUD_4MHZ_2X,
+  #elif PLATFORM_BAUDRATE == 4800L
+  ubr : ATM1281_4800_BAUD_4MHZ_2X,
   #endif
 #elif MHZ == 1
   #if PLATFORM_BAUDRATE == 57600L
@@ -217,6 +225,10 @@ Atm1281UartUnionConfig_t atm1281_uart_default_config = {{
   ubr : ATM1281_38400_BAUD_1MHZ_2X,
   #elif PLATFORM_BAUDRATE == 19200L
   ubr : ATM1281_19200_BAUD_1MHZ_2X,
+  #elif PLATFORM_BAUDRATE == 9600L
+  ubr : ATM1281_9600_BAUD_1MHZ_2X,
+  #elif PLATFORM_BAUDRATE == 4800L
+  ubr : ATM1281_4800_BAUD_1MHZ_2X,
   #endif
 #else
  #error "Unsupported settings for MHZ/PLATFORM_BAUDRATE, see Atm1281Usart.h"
