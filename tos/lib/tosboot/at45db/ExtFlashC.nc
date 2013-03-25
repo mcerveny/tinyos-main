@@ -39,6 +39,9 @@
  * @author Jonathan Hui <jwhui@cs.berkeley.edu>
  */
 
+#include "hardware.h"
+#include "HplAt45db_chip.h"
+
 module ExtFlashC {
   provides {
     interface Init;
@@ -48,8 +51,6 @@ module ExtFlashC {
 }
 
 implementation {
-
-  uint32_t addr;
 
   command error_t Init.init() {
     TOSH_MAKE_FLASH_CS_OUTPUT();
@@ -100,44 +101,24 @@ implementation {
 
     uint8_t  cmdBuf[4];
     uint8_t  i;
+    uint32_t encodedAddr;
 
-    addr = newAddr;
+    encodedAddr = ((newAddr / AT45_PAGE_SIZE) << AT45_PAGE_SIZE_LOG2) + (newAddr % AT45_PAGE_SIZE);
 
-#if defined(PLATFORM_MULLE)
-    cmdBuf[0] = 0x68;
-    cmdBuf[1] = (addr >> 15);
-    cmdBuf[2] = ((addr >> 7) & 0xFC) + ((addr >> 8) & 0x1);
-    cmdBuf[3] = addr & 0xff;
-#else
-    cmdBuf[0] = 0x68;
-    cmdBuf[1] = (addr >> 15) & 0xff;
-    cmdBuf[2] = (addr >> 7) & 0xfe;
-    cmdBuf[3] = addr & 0xff;
-#endif
-    
-    TOSH_CLR_FLASH_CLK_PIN();
+	cmdBuf[0] = 0x03;	// Continuous Array Read (Low Frequency: Opcode 03H) (up to 33Mhz)
+	cmdBuf[1] = (encodedAddr >> 16) & 0xff;
+	cmdBuf[2] = (encodedAddr >> 8) & 0xff;
+	cmdBuf[3] = (encodedAddr) & 0xff;
+
+    TOSH_CLR_FLASH_CLK_PIN(); // SPI mode 0
     TOSH_CLR_FLASH_CS_PIN();
     
     for(i = 0; i < 4; i++)
       SPIByte(cmdBuf[i]);
-    for(i = 0; i < 4; i++)
-      SPIByte(0x0);
     
-    TOSH_SET_FLASH_CLK_PIN();
-    TOSH_CLR_FLASH_CLK_PIN();
-
   }
 
   command uint8_t ExtFlash.readByte() {
-#if defined(PLATFORM_MULLE)
-    if (!(addr & 0x1ff)) {
-#else
-    if (!(addr & 0xff)) {
-#endif
-      call ExtFlash.stopRead();
-      call ExtFlash.startRead(addr);
-    }
-    addr++;
     return SPIByte(0);
   }
 

@@ -47,7 +47,7 @@ generic module BlockStorageManagerP(uint8_t clients)
     interface VolumeId[uint8_t client];
 #if defined(PLATFORM_TELOSB)
     interface StorageMap as SubStorageMap[volume_id_t volume_id];
-#elif defined(PLATFORM_MICAZ) || defined(PLATFORM_IRIS) || defined(PLATFORM_EPIC) || defined(PLATFORM_MULLE) || defined(PLATFORM_TINYNODE)
+#elif defined(PLATFORM_MICAZ) || defined(PLATFORM_IRIS) || defined(PLATFORM_EPIC) || defined(PLATFORM_MULLE) || defined(PLATFORM_TINYNODE) || defined(PLATFORM_WSERIAL)
     interface At45dbVolume[volume_id_t volume_id];
 #endif
   }
@@ -190,11 +190,10 @@ implementation
     storage_addr_t p_addr = 0xFFFFFFFF;
 #if defined(PLATFORM_TELOSB)
     p_addr = call SubStorageMap.getPhysicalAddress[volume_id](addr);
-#elif defined(PLATFORM_MICAZ) || defined(PLATFORM_IRIS) || defined(PLATFORM_EPIC) || defined(PLATFORM_MULLE) || defined(PLATFORM_TINYNODE)
-    at45page_t page = call At45dbVolume.remap[volume_id]((addr >> AT45_PAGE_SIZE_LOG2));
-    at45pageoffset_t offset = addr & ((1 << AT45_PAGE_SIZE_LOG2) - 1);
-    p_addr = page;
-    p_addr = p_addr << AT45_PAGE_SIZE_LOG2;
+#elif defined(PLATFORM_MICAZ) || defined(PLATFORM_IRIS) || defined(PLATFORM_EPIC) || defined(PLATFORM_MULLE) || defined(PLATFORM_TINYNODE)  || defined(PLATFORM_WSERIAL)
+    at45page_t page = call At45dbVolume.remap[volume_id]((addr / AT45_PAGE_SIZE));
+    at45pageoffset_t offset = addr % AT45_PAGE_SIZE;
+    p_addr = (storage_addr_t)page * AT45_PAGE_SIZE;
     p_addr += offset;
 #endif
     return p_addr;

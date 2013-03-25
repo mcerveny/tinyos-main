@@ -105,6 +105,14 @@ ifeq ($(MAKECMDGOALS),tinynode)
   POST_BUILD_EXTRA_DEPS += strip_iv 
 endif
 
+ifeq ($(MAKECMDGOALS),wserial)
+  CFLAGS += -DTOSBOOT_START=0x1e000 -DTOSBOOT_END=0x20000
+  CFLAGS += -Wl,--section-start=.text=0x1e000
+  CFLAGS += -Iwserial -Iat45db -Iavr -Ilib
+  CFLAGS += -I../net/Deluge
+#  CFLAGS += -g 
+#  CFLAGS += -O0
+endif
 
 
 strip_iv: FORCE

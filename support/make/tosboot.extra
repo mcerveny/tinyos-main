@@ -65,5 +65,10 @@ ifeq ($(BOOTLOADER),tosboot)
 		BOOTLOADER_IMG ?= $(TOSBOOT_DIR)/tinynode/main.ihex
    endif
 
+  ifeq ($(TARGETS),wserial)
+    CFLAGS += -I$(DELUGE_EXTRA)/wserial -I$(DELUGE_EXTRA)/micaz -I$(DELUGE_EXTRA)/mica2 -I$(DELUGE_EXTRA)/avr -I$(DELUGE_EXTRA)
+    BOOTLOADER_IMG ?= $(TOSBOOT_DIR)/wserial/main.ihex
+    AVR_FUSE_H ?= 0xda
+  endif
 
 endif
