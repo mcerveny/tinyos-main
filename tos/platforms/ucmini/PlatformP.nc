@@ -43,6 +43,9 @@ module PlatformP @safe()
     interface Init as McuInit;
     interface Init as LedsInit;
     interface Init as Stm25pInit; 
+    #ifndef DISABLE_BATTRY_CHECK
+    interface Init as BatteryWarning;
+    #endif
   }
 }
 
@@ -53,9 +56,10 @@ implementation
     error_t ok;
 
     ok = call McuInit.init();
-    ok = ecombine(ok, call Stm25pInit.init());
     ok = ecombine(ok, call LedsInit.init());
-
+    ok = ecombine(ok, call Stm25pInit.init());
+    ok = ecombine(ok, call BatteryWarning.init());
+    
     return ok;
   }
 
