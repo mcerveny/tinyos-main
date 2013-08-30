@@ -1,0 +1,37 @@
+
+  push( @includes, qw(
+
+  %T/platforms/wserial900
+  %T/platforms/wserial900/chips/rf212
+  %T/platforms/wserial900/chips/at45db
+  %T/chips/rf212
+  %T/chips/at45db
+  %T/chips/atm1281
+  %T/chips/atm1281/adc
+  %T/chips/atm1281/timer
+  %T/chips/atm1281/pins
+  %T/chips/atm1281/usart
+  %T/chips/atm128
+  %T/chips/atm128/adc
+  %T/chips/atm128/pins
+  %T/chips/atm128/spi
+  %T/chips/atm128/i2c
+  %T/chips/atm128/timer
+  %T/lib/timer
+  %T/lib/serial
+  %T/lib/power
+  %T/lib/diagmsg
+  %T/lib/rfxlink/layers
+  %T/lib/rfxlink/util
+
+  ) );
+
+  @opts = qw(
+  -gcc=avr-gcc
+  -mmcu=atmega1281
+  -fnesc-target=avr
+  -fnesc-no-debug
+  -fnesc-scheduler=TinySchedulerC,TinySchedulerC.TaskBasic,TaskBasic,TaskBasic,runTask,postTask
+  );
+
+

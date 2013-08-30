@@ -1,0 +1,34 @@
+#-*-Makefile-*- vim:syntax=make
+
+PLATFORM = wserial900
+SENSORBOARD ?= 
+PROGRAMMER ?= avarice
+
+VOLUME_ALLOCATOR_FLAGS = -s 264
+
+ifeq ($(PROGRAMMER),avrdude)
+  PROGRAMMER_PART ?= -pm1281 -U efuse:w:0xff:m
+endif
+
+ifeq ($(PROGRAMMER),uisp)
+  PROGRAMMER_PART ?= -dpart=ATmega1281 --wr_fuse_e=ff
+endif
+
+ifeq ($(PROGRAMMER),avarice)
+  PROGRAMMER_PART ?= --part atmega1281
+  JTAGICEMKII ?= usb:3fc4
+  AVR_FUSE_E ?= 0xff
+endif
+
+#Setting Fusebits as default
+AVR_FUSE_H ?= 0x10
+AVR_FUSE_L ?= 0xE2
+
+ifdef RF212_CHANNEL
+PFLAGS += -DRF212_DEF_CHANNEL=$(RF212_CHANNEL)
+endif
+
+$(call TOSMake_include_platform,avr)
+
+wserial900: $(BUILD_DEPS)
+	@:
