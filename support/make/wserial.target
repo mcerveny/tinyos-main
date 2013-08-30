@@ -4,6 +4,7 @@ PLATFORM = wserial
 SENSORBOARD ?= 
 PROGRAMMER ?= avarice
 
+VOLUME_ALLOCATOR_FLAGS = -s 264
 
 ifeq ($(PROGRAMMER),avrdude)
   PROGRAMMER_PART ?= -pm1281 -U efuse:w:0xff:m
@@ -20,7 +21,7 @@ ifeq ($(PROGRAMMER),avarice)
 endif
 
 #Setting Fusebits as default
-AVR_FUSE_H ?= 0x19
+AVR_FUSE_H ?= 0x10
 AVR_FUSE_L ?= 0xE2
 
 ifdef RF230_CHANNEL
