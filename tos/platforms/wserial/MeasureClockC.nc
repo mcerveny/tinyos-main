@@ -153,6 +153,6 @@ implementation
 
   async command uint16_t Atm128Calibrate.baudrateRegister(uint32_t baudrate) {
     // value is (cycles*32768) / (8*baudrate) - 1
-    return ((uint32_t)cycles << 12) / baudrate - 1;
+    return ((uint32_t)cycles << 12) / baudrate ;
   }
 }
