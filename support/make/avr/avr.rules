@@ -146,7 +146,31 @@ exe: exe0 bytes FORCE
 
 exe0: builddir $(BUILD_EXTRA_DEPS) $(COMPONENT).nc FORCE
 	@echo "    compiling $(COMPONENT) to a $(PLATFORM) binary"
+ifdef DEBUG_FILES
+	$(NCC) -E $(NCC_SAFE_TINYOS_FLAGS) $(OPTFLAGS) $(PFLAGS) $(CFLAGS) $(WIRING_CHECK_FLAGS) $(COMPONENT).nc $(LIBS) $(LDFLAGS)
+	awk '\
+/\/\* unparse code begin \*\// { in_code = 1; } \
+/\/\* unparse code end \*\// { in_code = 0; if (debug == 1) printf( "#pragma GCC pop_options\n"); } \
+{ \
+  if ((in_code == 1) && ($$0 ~ /^# /)) { \
+     if (substr($$3,2,length($$3)-2) ~ /$(shell echo "$(DEBUG_FILES)" | sed 's/\//\\\//g')/) { \
+	if (debug == 0) { \
+          printf( "#pragma GCC push_options\n#pragma GCC optimize (\"O0\")\n"); \
+          debug = 1; \
+	} \
+     } \
+     else \
+	if (debug == 1) { \
+          printf( "#pragma GCC pop_options\n"); \
+          debug = 0; \
+     	} \
+  } \
+  print $0; \
+}' < $(BUILDDIR)/app.c > $(BUILDDIR)/app_.c
+	$(NCC) -o $(MAIN_EXE) $(NCC_SAFE_TINYOS_FLAGS) $(OPTFLAGS) $(PFLAGS) $(CFLAGS) $(WIRING_CHECK_FLAGS) $(BUILDDIR)/app_.c $(LIBS) $(LDFLAGS)
+else
 	$(NCC) -o $(MAIN_EXE) $(NCC_SAFE_TINYOS_FLAGS) $(OPTFLAGS) $(PFLAGS) $(CFLAGS) $(WIRING_CHECK_FLAGS) $(COMPONENT).nc $(LIBS) $(LDFLAGS)
+endif
 ifdef WIRING_CHECK_FILE
 	@nescc-wiring $(WIRING_CHECK_FILE)
 endif
