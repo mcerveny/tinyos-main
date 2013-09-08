@@ -4,8 +4,10 @@
   %T/platforms/wserial
   %T/platforms/wserial/chips/rf230
   %T/platforms/wserial/chips/at45db
+  %T/platforms/wserial/chips/sram23x
   %T/chips/rf230
   %T/chips/at45db
+  %T/chips/sram23x
   %T/chips/atm1281
   %T/chips/atm1281/adc
   %T/chips/atm1281/timer
