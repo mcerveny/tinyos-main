@@ -30,8 +30,8 @@ PFLAGS += -I$(TOSDIR)/lib/fragpool
 # this works around fragmentation in the RX buffer pool
 PFLAGS += -DPPP_HDLC_RX_FRAME_LIMIT=1 -DPPP_HDLC_TX_FRAME_LIMIT=4
 
-# if you set this, the stack won't use dhcp to assign addresses -- it
-# will use this prefix combined with TOS_NODE_ID
+# Set this when you want to use statically assigned addresses. The stack will
+# not use DHCP in that case.
 #PFLAGS += -DIN6_PREFIX=\"2001:638:708:1156::\"
 #PFLAGS += -DIN6_PREFIX=\"fec0::\"
 #PFLAGS += -DIN6_PREFIX=\"2a01:198:56c:1000::\"
@@ -44,7 +44,6 @@ PFLAGS += -DIN6_PREFIX=\"2a01:c911:0:212f::\"
 # uncomment this line if you are having problems displaying the new printf semantics
 # CFLAGS += -DPRINTF_BUFFER_SIZE=1024
 
-PFLAGS += -DBLIP_NO_RADIO
 #PFLAGS += -DROUTE_TABLE_SZ=1
 
 ################ CoAP Server ###############################
