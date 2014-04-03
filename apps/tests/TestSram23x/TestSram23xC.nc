@@ -32,8 +32,8 @@
 
 /**
  * This is demo application for external SRAM based on Microchip 23xYYY
- * Application fill whole SRAM with incremental data (led0),
- * then data is read back and tested (led1),
+ * Application fill whole SRAM with incremental data (led1),
+ * then data is read back and tested (led0),
  * if data does not equals error is shown (led2 toggles).
  *
  * @author Martin Cerveny
@@ -70,38 +70,49 @@ implementation {
 
 	event void FirstSram23x.readDone() {
 		uint8_t i;
+		uint32_t len;
 
-		for(i = 0; i < sizeof(rbuff); i++) {
+		len = (where + sizeof(rbuff) > call FirstSram23x.getSize()) ? call FirstSram23x.getSize() - where : sizeof(rbuff);
+
+		for(i = 0; i < len; i++) {
 			if(rbuff[i] != ((where + i + fill)& 0xff))
 				call Leds.led2Toggle();
 		}
-		where += sizeof(rbuff);
-		if(where > call FirstSram23x.getSize()) {
+		where += len;
+
+		if(where == call FirstSram23x.getSize()) {
 			call Leds.led0Off();
 			call Leds.led1On();
 			fill++;
 			call FirstSram23x.write(where = 0, 0, 0);
 		}
-		else
-			call FirstSram23x.read(where, rbuff, sizeof(rbuff));
+		else {
+			len = (where + sizeof(rbuff) > call FirstSram23x.getSize()) ? call FirstSram23x.getSize() - where : sizeof(rbuff);
+			call FirstSram23x.read(where, rbuff, len);
+		}
 	}
 
 	event void FirstSram23x.writeDone() {
 		uint8_t i;
+		uint32_t len;
 
-		if(where >= call FirstSram23x.getSize()) {
+		if(where == call FirstSram23x.getSize()) {
 			call Leds.led0On();
 			call Leds.led1Off();
 			call FirstSram23x.read(where = 0, rbuff, sizeof(rbuff));
 			return;
 		}
+
 		for(i = 0; i < sizeof(wbuff); i++)
 			wbuff[i] = (i + where + fill)& 0xff;
 
-		call FirstSram23x.write(where, wbuff, sizeof(wbuff));
-		where += sizeof(wbuff);
+		len = (where + sizeof(wbuff) > call FirstSram23x.getSize()) ? call FirstSram23x.getSize() - where : sizeof(wbuff);
+		call FirstSram23x.write(where, wbuff, len);
+		where += len;
 	}
 
 	event void FirstSram23x.fillDone() {
+	}
+	event void FirstSram23x.copyDone() {
 	}
 }

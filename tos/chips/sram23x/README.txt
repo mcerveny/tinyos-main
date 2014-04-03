@@ -1,9 +1,10 @@
 Implementation HAL/HPL/Generic for serial SRAM from Microchip 23xYYY.
 
-- This implementation is tested on 23K256 (32kB RAM, 2 byte addressing) and should be compatible with 23x640, 23x256, 23x512, 23x1024 (3 byte adressing). 
+- This implementation is tested on 23K256 (32kB RAM, 2 byte addressing) and should be compatible with 23x640, 23x256, 23x512, 23x1024 (3 byte adressing).
 - The SPI mode 1x is only used (not dual and quad modes)
 - The most common sequential mode is used (not page mode or byte mode).
-- There is two different types of integration.
+- There is split API and synchronous API (*Now()) .
+- There is two different types of integration:
 
 1) HAL/HPL version
 
@@ -31,10 +32,10 @@ interface GeneralIO as Select = chip select for SRAM chip
 - HAL component name is application, sensorboard or platform defined (for example FirstSram23xC.nc, SecondSram23xC.nc ...) with SPI binding and hardware parameters. The HAL file should be placed in tos/platforms/XYZ/, tos/sensorboards/XYZ/  or in application directory if application specific. The interface "GenericSram23x<type_addr_t, type_size_t>" provides same functionality as interface "Sram23x"in HAL/HPL version.
 - HAL component uses driver HAL "GenericSram23xC" with "new" bindings with parameters.
 
-- Parameters for new "GenericSram23xC(typedef sram23xaddress_t @integer(), typedef sram23xsize_t @integer(), uint8_t cfg_addrbytes, uint32_t cfg_chipsize)":
+- Parameters for new "GenericSram23xC(typedef sram23xaddress_t @integer(), typedef sram23xsize_t @integer(), uint8_t cfg_addrsize, uint32_t cfg_chipsize)":
 sram23xaddress_t = Type must be large enough to hold address (usually uint16_t/uint32_t).
 sram23xsize_t = Type must be large enough to hold request size (usually only uint16_t on small platforms).
-cfg_addrbytes = How many bytes used for address in SRAM (2 or 3).
+cfg_addrsize = How many bytes used for address in SRAM (2 or 3).
 cfg_chipsize = How large is the SRAM in bytes (8192, 32768, ...).
 
 - Binings for GenericSram23xC:

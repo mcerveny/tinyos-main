@@ -45,50 +45,78 @@
 
 interface GenericSram23x<sram23xaddress_t, sram23xsize_t> {
 	/**
-	 * Read directly from sram. readDone will be signaled.
+	 * Query size of SRAM.
+	 * @return Size in bytes returned.
+	 */
+	command sram23xaddress_t getSize();
+
+	/**
+	 * Read from SRAM. readDone will be signaled. Read is done in SRAM23X_MAX_BLOCK block sizes.
 	 * @param addr Address to read from.
 	 * @param data Buffer in which to place read data. The buffer is "returned"
 	 *   at readDone time.
 	 * @param n Number of bytes to read (> 0).
-	 * @return SUCCESS When a request has been accepted. <br>
-	 *            EBUSY Some activity pending.<br>
-	 * 	          FAIL Bad parameters.
+	 * @return SUCCESS When the request has been accepted.<br/>
+	 *   EBUSY Some activity is pending.<br/>
+	 *   FAIL Bad parameters.
 	 */
-	command error_t read(sram23xaddress_t addr, uint8_t * PASS COUNT_NOK(n) data, sram23xsize_t n);
+	command error_t read(sram23xaddress_t addr, void * PASS COUNT_NOK(n) data, sram23xsize_t n);
 
 	/**
-	 * Signaled when data has been read from the buffer. The data buffer
+	 * Signaled when data has been read to the buffer. The data buffer
 	 * is "returned".
 	 */
 	event void readDone();
 
 	/**
-	 * Write some data to sram, writeDone will be signaled.
+	 * Read synchronously from SRAM.
+	 * @param addr Address to read from.
+	 * @param data Buffer in which to place read data.
+	 * @param n Number of bytes to read (> 0).
+	 * @return SUCCESS When read was successful.<br/>
+	 *   EBUSY Some activity is pending or resource immediate request was unsuccessful.<br/>
+	 *   FAIL Bad parameters.
+	 */
+	command error_t readNow(sram23xaddress_t addr, void * PASS COUNT_NOK(n) data, sram23xsize_t n);
+
+	/**
+	 * Write some data to SRAM, writeDone will be signaled. Write is done in SRAM23X_MAX_BLOCK block sizes.
 	 * @param addr Address to write to.
 	 * @param data Data to write. The buffer is "returned" at writeDone time.
 	 * @param n Number of bytes to write (> 0).
-	 * @return SUCCESS When a request has been accepted. <br>
-	 *            EBUSY Some activity pending.<br>
-	 * 	          FAIL Bad parameters.
+	 * @return SUCCESS When the request has been accepted.<br/>
+	 *   EBUSY Some activity is pending.<br/>
+	 *   FAIL Bad parameters.
 	 */
-	command error_t write(sram23xaddress_t addr, uint8_t * PASS COUNT_NOK(n) data, sram23xsize_t n);
+	command error_t write(sram23xaddress_t addr, void * PASS COUNT_NOK(n) data, sram23xsize_t n);
 
 	/**
-	 * Signaled when data has been written to the buffer. The data buffer
+	 * Signaled when data has been written from the buffer. The data buffer
 	 * is "returned".
 	 */
 	event void writeDone();
 
 	/**
-	 * Fill SRAM with fill pattern, fillDone will be signaled.
+	 * Write synchronously to SRAM.
+	 * @param addr Address to write to.
+	 * @param data Data to write.
+	 * @param n Number of bytes to write (> 0).
+	 * @return SUCCESS When the request has been accepted.<br/>
+	 *   EBUSY Some activity is pending or resource immediate request was unsuccessful.<br/>
+	 *   FAIL Bad parameters.
+	 */
+	command error_t writeNow(sram23xaddress_t addr, void * PASS COUNT_NOK(n) data, sram23xsize_t n);
+
+	/**
+	 * Fill SRAM with fill pattern, fillDone will be signaled. Fill is done in SRAM23X_MAX_BLOCK block sizes.
 	 * @param addr Address to erase to.
 	 * @param n Number of bytes to erase (> 0).
-	 * @param fill Pattern to fill.
-	 * @return SUCCESS When a request has been accepted. <br>
-	 *            EBUSY Some activity pending.<br>
-	 * 	          FAIL Bad parameters.
+	 * @param pattern Pattern to fill.
+	 * @return SUCCESS When write was successful<br/>
+	 *   EBUSY Some activity is pending.<br/>
+	 *   FAIL Bad parameters.
 	 */
-	command error_t fill(sram23xaddress_t addr, sram23xsize_t n, uint8_t fill);
+	command error_t fill(sram23xaddress_t addr, sram23xsize_t n, uint8_t pattern);
 
 	/**
 	 * Signaled when SRAM is filled.
@@ -96,8 +124,41 @@ interface GenericSram23x<sram23xaddress_t, sram23xsize_t> {
 	event void fillDone();
 
 	/**
-	 * Query size of SRAM.
-	 * @return Size in bytes returned.
+	 * Fill synchronously SRAM with fill pattern.
+	 * @param addr Address to erase to.
+	 * @param n Number of bytes to erase (> 0).
+	 * @param pattern Pattern to fill.
+	 * @return SUCCESS When fill was successful.<br/>
+	 *   EBUSY Some activity is pending or resource immediate request was unsuccessful.<br/>
+	 *   FAIL Bad parameters.
 	 */
-	command sram23xaddress_t getSize();
+	command error_t fillNow(sram23xaddress_t addr, sram23xsize_t n, uint8_t pattern);
+
+	/**
+	 * Copy data block in SRAM. copyDone will be signaled. Copy is done in SRAM23X_MAX_BLOCK block sizes.
+	 * @param daddr Destination address.
+	 * @param saddr Source address.
+	 * @param n Number of bytes to copy (> 0).
+	 * @return SUCCESS When the request has been accepted.<br/>
+	 *   EBUSY Some activity is pending.<br/>
+	 *   FAIL Bad parameters.
+	 */
+	command error_t copy(sram23xaddress_t daddr, sram23xaddress_t saddr, sram23xsize_t n);
+
+	/**
+	 * Signaled when data has been copied.
+	 */
+	event void copyDone();
+
+	/**
+	 * Copy data block in SRAM.
+	 * @param daddr Destination address.
+	 * @param saddr Source address.
+	 * @param n Number of bytes to copy (> 0).
+	 * @return SUCCESS When copy was successful.<br/>
+	 *   EBUSY Some activity is pending or resource immediate request was unsuccessful.<br/>
+	 *   FAIL Bad parameters.
+	 */
+	command error_t copyNow(sram23xaddress_t daddr, sram23xaddress_t saddr, sram23xsize_t n);
+
 }

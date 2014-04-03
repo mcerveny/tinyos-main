@@ -53,7 +53,7 @@ enum {
 };
 
 // maximum request size per one resource request
-// (To prevent block shared SPI resource and CPU dispatcher for log period of time)
+// (To prevent block shared SPI resource and CPU dispatcher for long period of time)
 #ifndef SRAM23X_MAX_BLOCK
 #define SRAM23X_MAX_BLOCK 128
 #endif
